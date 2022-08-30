@@ -1,4 +1,5 @@
 from solution import find_intersection
+from typing import List
 
 
 class Node:
@@ -7,7 +8,7 @@ class Node:
         self.next = nxt
 
 
-def make_list(l: list) -> list[Node]:
+def make_list(l: list) -> List[Node]:
     nodes = [Node(v) for v in l]
     for node, next in zip(nodes[:-1], nodes[1:]):
         node.next = next
