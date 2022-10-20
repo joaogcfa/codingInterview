@@ -47,7 +47,7 @@ def get_fibonacci_type(version: int) -> str:
 
 
 def difference_between_fibonacci1_and_fibonacci2() -> str:
-    return ''
+    return 'Generator functions are a special kind of function that return a lazy iterator. This lazy iterator is the main difference from a generator to a normal funcition, since a normal function that would return a list would return all the values at once, while a generator function would return one value at a time, and only when it is needed. Moreover, a generator function can be used to create an infinite sequence of values, while a normal function would return a list with a finite number of values, since lazy iterators are not stored in memory.'
 
 
 class SkipIterator:
