@@ -54,28 +54,45 @@ class SkipIterator:
     def __init__(self, elements):
         self.elements = elements
         # You can add more code here if you need
+        self.currIdx = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.currIdx >= len(self.elements):
+            raise StopIteration
+        else:
+            self.currIdx += 2
+            return self.elements[self.currIdx - 2]
 
 
 def my_avg(e1: float, e2: float, *others: Tuple[float]) -> float:
-    return -1
+    if others is not None:
+        return (e1 + e2 + sum(others)) / (2 + len(others))
+    else:
+        return (e1 + e2) / 2
 
 
 def keys_with_different_value() -> List[int]:
-    return []
+    return [i for i in range(5, 10)]
 
 
 def print_out_in(*numbers) -> None:
     while len(numbers) > 1:
         # You should add code here and remove the break
-        break
+        a, *numbers, b = numbers
+        print(a, b)
 
     if numbers:
         # You should add code here
-        pass
+        print(numbers[0])
 
 
-def append_range(start: int, end: int, step: int = 1, to: List[int] = []):
+def append_range(start: int, end: int, step: int = 1, to: "list[int]" = None):
     # You may add code here
+    if to is None:
+        to = []
 
     # Don't change the code below
     for i in range(start, end, step):
@@ -92,13 +109,11 @@ def global_var_func1(n: int):
 
 
 def global_var_func2(n: int):
+    global global_var
     for i in range(n):
         global_var += i
         print(global_var)
 
 
 def value_is_None(value):
-    return value == None
-
-
-print(get_even_numbers_between(1, 6))
+    return value is None

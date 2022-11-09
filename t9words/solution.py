@@ -33,42 +33,76 @@ class TrieNode:
         self.children = {}
 
 
-def get_valid_t9_words(number: str, words: List[str]) -> List[str]:
-    results = []
+class Trie(object):
+    """The trie object"""
 
-    def get_valid_words(number, prefix):
-        possible_letters = ""
-        n_tem_prefix = True
-        count = 0
+    def __init__(self):
+        """
+        The trie has at least the root node.
+        The root node does not store any character
+        """
+        self.root = TrieNode("")
 
-        # If it's a complete word, print it.
-        if not number:
-            if prefix in words:
-                results.append(prefix)
-            return
+    def insert(self, word):
+        """Insert a word into the trie"""
+        node = self.root
 
-        # Get characters that match this digit.
-        digit = number[0]
-        letters = T9_CHARS.get(digit, '')
+        # Loop through each character in the word
+        # Check if there is no child containing the character, create a new child for the current node
+        for char in word:
+            if char in node.children:
+                node = node.children[char]
+            else:
+                # If a character is not found,
+                # create a new node in the trie
+                new_node = TrieNode(char)
+                node.children[char] = new_node
+                node = new_node
 
-        while n_tem_prefix:
-            word = words[count]
-            for letter in letters:
-                # print(prefix + letter)
-                # print(word[0:len(prefix)])
-                if prefix + letter == word[0:len(prefix)+1]:
-                    n_tem_prefix = False
-                    possible_letters += letter
-                    # break
+        # Mark the end of a word
+        node.is_end = True
 
-        print(possible_letters)
+        # Increment the counter to indicate that we see this word once more
+        node.counter += 1
 
-        # Go through all remaining options.
-        for letter in possible_letters:
-            get_valid_words(number[1:], prefix + letter)
+    def dfs(self, node, prefix):
+        """Depth-first traversal of the trie
 
-    get_valid_words(number, '')
-    return results
+        Args:
+            - node: the node to start with
+            - prefix: the current prefix, for tracing a
+                word while traversing the trie
+        """
+        if node.is_end:
+            self.output.append((prefix + node.char, node.counter))
+
+        for child in node.children.values():
+            self.dfs(child, prefix + node.char)
+
+    def query(self, x):
+        """Given an input (a prefix), retrieve all words stored in
+        the trie with that prefix, sort the words by the number of 
+        times they have been inserted
+        """
+        # Use a variable within the class to keep all possible outputs
+        # As there can be more than one word with such prefix
+        self.output = []
+        node = self.root
+
+        # Check if the prefix is in the trie
+        for char in x:
+            if char in node.children:
+                node = node.children[char]
+            else:
+                # cannot found the prefix, return empty list
+                return []
+
+        # Traverse the trie to get all candidates
+        self.dfs(node, x[:-1])
+        # print(self.output)
+
+        # Sort the results in reverse order and return
+        return sorted(self.output, key=lambda x: x[1], reverse=True)
 
 
 WORDS = [w for w in '''
@@ -10323,4 +10357,37 @@ minimization
 cognizant
 '''.split() if w]
 
-print(get_valid_t9_words("8733", ["tree", "used"]))
+trie = Trie()
+
+for word in WORDS:
+    trie.insert(word)
+
+
+def get_valid_t9_words(number: str, words: List[str]) -> List[str]:
+    results = []
+
+    def get_valid_words(number, prefix):
+
+        if (len(trie.query(prefix)) == 0):
+            print("no words found")
+            return
+
+        print(number, prefix)
+        if not number:
+            print('found', prefix)
+            if (trie.query(prefix)[0][0] == prefix):
+                results.append(prefix)
+            return
+
+        print("at", number, prefix)
+        print("\n")
+
+        for char in T9_CHARS[number[0]]:
+            get_valid_words(number[1:], prefix + char)
+
+    get_valid_words(number, '')
+
+    return results
+
+
+print(get_valid_t9_words('2', ['a', 'b', 'c']))
